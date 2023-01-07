@@ -66,21 +66,21 @@ void connectMPU(int addr){
 
 void setup() {
   Serial.begin(115200);
-  pinMode(LED_BUILTIN, OUTPUT); // LED als Output definieren
-  digitalWrite(LED_BUILTIN, HIGH); // Ausschalten
+  pinMode(LED_BUILTIN, OUTPUT);
+  digitalWrite(LED_BUILTIN, HIGH); // turn off onboard led
 
-  // MPU6050 Sensor initialize!
+  // initialize MPU6050 Sensor
   connectMPU(0x68);
   
-  //first parameter is name of access point, second is the password
+  // first parameter is name of access point, second is the password
   AsyncWiFiManager wifiManager(&server,&dns);
 
   wifiManager.autoConnect("ESP-Gyrosocket");
 
-  // Websocket
+  // websocket part
   ws.onEvent(onWsEvent);
   server.addHandler(&ws);
-  AsyncElegantOTA.begin(&server);
+  AsyncElegantOTA.begin(&server, "espgyro", "CHANGEME"); // SECURITY: Change the password!
   server.begin();
 
 }
