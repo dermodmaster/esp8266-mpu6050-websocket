@@ -29,10 +29,11 @@ void onWsEvent(AsyncWebSocket * server, AsyncWebSocketClient * client, AwsEventT
 
 // function to light the onboard led up. LED can blink if you offer a times parameter bigger than 1.
 void lightUpLED(long length, long times = 1){
-  for (long i; i<times; i++){
+  for (long i=0; i<times; i++){
       digitalWrite(LED_BUILTIN, LOW); // Einschalten
       delay(length);
       digitalWrite(LED_BUILTIN, HIGH); // Ausschalten
+      if(times > 1) delay(length);
   }
 }
 
@@ -64,13 +65,12 @@ void connectMPU(int addr){
   
 }
 
+
 void setup() {
   Serial.begin(115200);
   pinMode(LED_BUILTIN, OUTPUT);
   digitalWrite(LED_BUILTIN, HIGH); // turn off onboard led
 
-  // initialize MPU6050 Sensor
-  connectMPU(0x68);
   
   // first parameter is name of access point, second is the password
   AsyncWiFiManager wifiManager(&server,&dns);
@@ -82,6 +82,8 @@ void setup() {
   server.addHandler(&ws);
   AsyncElegantOTA.begin(&server, "espgyro", "CHANGEME"); // SECURITY: Change the password!
   server.begin();
+  // initialize MPU6050 Sensor
+  connectMPU(0x68);
 
 }
 
